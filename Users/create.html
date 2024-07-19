@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UserForm</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="./index.html">TODOs</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="./index.html">Users</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <form>
+        <div class="id-container">
+          <!-- <span class="id-label">ID:</span> -->
+          <input type="hidden" name="id-number" id="rndm_id" />
+          <!-- <span class="id-number" id="rndm_id"></span> -->
+        </div>
+        <br />
+
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">First Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="first_name"
+            aria-describedby="emailHelp"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="last_name">Last Name</label>
+          <input type="text" class="form-control" id="last_name" />
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="email">Email</label>
+          <input type="email" class="form-control" id="email" />
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="email">Phone</label>
+          <input type="number" class="form-control" id="phone_number" />
+        </div>
+        <div id="emailHelp" class="form-text">
+          We'll never share your email with anyone else.
+        </div>
+        <br />
+        <label for="choice">Gender:</label>
+        <input type="radio" name="gender" id="radiobtn" value="Male" />
+        <label for="yes">Male</label>
+        <input type="radio" name="gender" id="radiobtn1" value="Female" />
+        <label for="no">Female</label><br /><br />
+        <input type="hidden" name="key_value" id="key_value" value="0" />
+        <input type="hidden" name="is_edit" id="is_edit" value="false" />
+        <button type="submit" class="btn btn-primary" id="btn">Submit</button>
+      </form>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      document.addEventListener("DOMContentLoaded",  () => {
+        let data = JSON.parse(localStorage.getItem("users")) || [];
+        if (!Array.isArray(data)) {
+          data = [];
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get("UserId");
+        console.log(userId);
+
+        const editedUser = data.find((user) => user.id === userId);
+        console.log(editedUser);
+
+        if (editedUser) {
+          document.getElementById("first_name").value =
+            editedUser.first_name || "";
+          document.getElementById("last_name").value =
+            editedUser.last_name || "";
+          document.getElementById("email").value = editedUser.email || "";
+
+          var radioButtons = document.getElementsByName("gender");
+          for (let i of radioButtons) {
+            if (i.value === editedUser.gender) {
+              i.checked = true;
+            }
+          }
+
+          document.getElementById("phone_number").value =
+            editedUser.phoneno || "";
+          document.getElementById("is_edit").value = "true";
+          // document.getElementById("key_value").value = data.indexOf(editedUser);
+          document.getElementById("rndm_id").value = editedUser.id
+        }
+
+        // let rndm_id = document.getElementById("rndm_id");
+        // rndm_id.innerText = Math.random().toString(36).substring(2, 7);
+
+        let btn = document.getElementById("btn");
+        btn.addEventListener("click",  (e) => {
+          console.log("Submit button clicked!");
+          e.preventDefault();
+          let id = document.getElementById("rndm_id").value;
+          let first_name = document.getElementById("first_name").value;
+          let last_name = document.getElementById("last_name").value;
+          let email = document.getElementById("email").value;
+          let gender = document.querySelector(
+            "input[type=radio]:checked"
+          ).value;
+          let phoneno = document.getElementById("phone_number").value;
+          if (phoneno.length !== 10) {
+            alert("Please enter a valid mobile number");
+            return;
+          }
+          const isEdit = document.getElementById("is_edit").value === "true";
+          // const index = isEdit
+          //   ? parseInt(document.getElementById("key_value").value)
+          //   : data.length;
+          if (!first_name || !last_name || !email || !gender || !phoneno) {
+            alert("Please fill out all fields.");
+            return false;
+          }
+          console.log("Updated User Data:", data);
+          // if (!isEdit) {
+          //   id = Math.random().toString(36).substring(2, 7);
+          // }
+
+          const row = {
+            id,
+            first_name,
+            last_name,
+            email,
+            gender,
+            phoneno
+          };
+          console.log(row);
+
+          for (let i of data) {
+            if (i.email == email && !isEdit) {
+              alert("User with this Email ID already exists");
+              return;
+            } else if (i.phoneno == phoneno && i.id != id && !isEdit) {
+              alert(
+                "Phone Number Already in use! Please try another Phone Number"
+              );
+              return;
+            }
+          }
+
+          if (isEdit) {
+            const existingIndex = data.findIndex((item) => item.id === id);
+            console.log(existingIndex);
+            if (existingIndex >= 0) {
+              data[existingIndex] = row;
+            }
+          } else {
+            id = Math.random().toString(36).substring(2, 7);
+            row.id = id;
+            data.push(row);
+          }
+
+          localStorage.setItem("users", JSON.stringify(data));
+          console.log("Updated Data in Local Storage:", data);
+
+          resetfield();
+          console.log("Form fields reset.");
+          showalert();
+
+          // alert("User data submitted successfully!");
+          window.location.href = "index.html";
+        });
+
+        const resetfield = () => {
+          document.getElementById("first_name").value = "";
+          document.getElementById("last_name").value = "";
+          document.getElementById("email").value = "";
+          document.getElementById("phone_number").value = "";
+          document.querySelector('input[name="gender"]:checked').checked.value =
+            "";
+          document.getElementById("is_edit").value = "false";
+        }
+
+        // let editedData =
+        //   JSON.parse(localStorage.getItem("editedUserdata")) || [];
+
+        // if (editedData && Object.keys(editedData).length > 0) {
+        //   document.getElementById("first_name").value =
+        //     editedData.first_name || "";
+        //   document.getElementById("last_name").value =
+        //     editedData.last_name || "";
+        //   document.getElementById("email").value = editedData.email || "";
+
+        //   var radioButtons = document.getElementsByName("gender");
+        //   for (var i = 0; i < radioButtons.length; i++) {
+        //     if (radioButtons[i].value === editedData.gender) {
+        //       radioButtons[i].checked = true;
+        //     }
+        //   }
+
+        //   document.getElementById("phone_number").value =
+        //     editedData.phoneno || "";
+        //   document.getElementById("is_edit").value = "true";
+        //   document.getElementById("key_value").value = editedData.index;
+        //   rndm_id.innerText = editedData.id;
+        // }
+
+        // console.log(editedData);
+        // let remove_editeddata = document.getElementById("is_edit").value;
+        // if (remove_editeddata === "true") {
+        //   localStorage.setItem("editedUserdata", JSON.stringify([]));
+        // }
+      });
+
+      const showalert = () => {
+        const alertContainer = document.createElement("div");
+        alertContainer.className =
+          "alert alert-success alert-dismissible fade show fixed-top w-100";
+        alertContainer.innerHTML = `
+      <strong>Success!</strong> User Data Has Been Updated Successfully
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+
+        document.body.insertBefore(alertContainer, document.body.firstChild);
+
+        setTimeout( ()=> {
+          document.body.removeChild(alertContainer);
+        }, 2000);
+      }
+    </script>
+  </body>
+</html>

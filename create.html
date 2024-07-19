@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Task</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,700;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="./index.html">TODOs</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link mx-4" href="./Users/index.html">Users</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- <div class="dropdown mx-5 my-3">
+      <span class="me-2">Users:</span>
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="userDropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        onclick="showUsers()"
+      >
+        Users
+      </button>
+      <ul
+        class="dropdown-menu"
+        aria-labelledby="userDropdown"
+        id="userDropdownMenu"
+      ></ul>
+    </div> -->
+    <div class="container my-3">
+      <div class="my-3">
+        <span>Users: </span>
+        <select
+          class="form-select-sm"
+          aria-label="Default select example"
+          id="userSelect"
+        >
+          <option selected>Select User</option>
+        </select>
+      </div>
+      <label for="todotitle" class="form-label">TODO Title:</label><br />
+      <input
+        class="form-control gfg border rounded-pill border-dark"
+        type="text"
+        id="todotitle"
+        value=""
+        placeholder="Enter your todo title here..."
+      /><br /><br />
+      <!-- <input type="hidden" name="key_value" id="key_value" value="0" /> -->
+      <input type="hidden" name="is_edit" id="is_edit" value="false" />
+      <input type="hidden" name="original_date" id="original_date" />
+      <input type="hidden" name="id_of_task" id="id_of_task" />
+      <label for="todotask" class="form-label">TODO Task:</label><br />
+      <input
+        class="form-control gfg border rounded-pill border-dark"
+        type="text"
+        name="todotask"
+        id="todotask"
+        placeholder="Enter your todo task here.."
+      /><br /><br />
+      <button id="btn" type="button" class="btn btn-primary">Create</button
+      ><br /><br />
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      document.addEventListener("DOMContentLoaded",  ()=> {
+        let data = JSON.parse(localStorage.getItem("todos")) || [];
+        // let todotask = document.getElementById("todotask");
+        let urlParams = new URLSearchParams(window.location.search);
+  //       let selectedUserId = urlParams.get('user_id');
+  //       if (selectedUserId) {
+  //   document.getElementById("userSelect").value = selectedUserId;
+  // }
+    let taskId = urlParams.get('id');
+    showUsers()
+    console.log("Id of row: ",taskId);
+    if (taskId) {
+        let task = data.find(item => item.id === taskId);
+        console.log("Data to Edit",task);
+        if (task) {
+            document.getElementById("todotitle").value = task.title || "";
+            document.getElementById("todotask").value = task.task || "";
+            document.getElementById("userSelect").value = task.user_id || "";
+            document.getElementById("is_edit").value = true
+            document.getElementById("id_of_task").value = task.id;
+        }
+    }
+    
+
+        // let rndm_id = document.getElementById("id_of_task");
+        // if(document.getElementById("is_edit").value == "false"){
+        // rndm_id.innerText = Math.random().toString(36).substring(2,7);
+        // }
+        // showUsers();
+        btn.addEventListener("click",  (e)=> {
+          e.preventDefault();
+          let user_id = document.querySelector("#userSelect").value;
+          let id = document.getElementById("id_of_task").value
+          console.log(id);
+          let title = document.getElementById("todotitle").value;
+          let task = document.getElementById("todotask").value;
+          if (!todotitle || !todotask) {
+            alert("Please fill in both title and task fields.");
+            return;
+          }
+          const isEdit = document.getElementById("is_edit").value === "true";
+          let date = new Date().toLocaleString();
+          const row = {
+            id,
+            user_id,
+            title,
+            task,
+            date,
+          };
+          console.log(row);
+          // if (!isEdit) {
+          //   id = Math.random().toString(36).substring(2, 7);
+          // }
+          if (isEdit) {
+            const existingIndex = data.findIndex((item) => item.id === id);
+            console.log(existingIndex);
+            if (existingIndex >= 0) {
+              data[existingIndex] = row;
+            }
+          } else {
+            id = Math.random().toString(36).substring(2, 7);
+            row.id = id;
+            data.push(row);
+          }
+          localStorage.setItem("todos", JSON.stringify(data));
+          resetfield();
+          showalert();
+          window.location.href = `index.html?user_id=${user_id}`;
+        });
+
+        const resetfield = () => {
+          document.getElementById("todotitle").value = "";
+          document.getElementById("todotask").value = "";
+          document.getElementById("is_edit").value = false;
+          document.getElementById("userSelect").value = "";
+        }
+
+      
+        
+        // let editedData = JSON.parse(localStorage.getItem("editedData")) || [];
+        // if (editedData && Object.keys(editedData).length > 0) {
+        //   document.getElementById("todotitle").value = editedData.title || "";
+        //   document.getElementById("todotask").value = editedData.task || "";
+        //   document.getElementById("is_edit").value = "true";
+        //   document.getElementById("id_of_task").value = editedData.id || "";
+        //   let selectedUserId = editedData.user_id;
+        //   let userSelect = document.getElementById("userSelect");
+        //   userSelect.value = selectedUserId;
+        //   rndm_id.innerText = editedData.id;
+        // }
+        // console.log(editedData);
+        // let remove_editeddata = document.getElementById("is_edit").value;
+        // if (remove_editeddata === "true") {
+        //   localStorage.setItem("editedData", JSON.stringify([]));
+        // }
+      });
+      const showalert = () =>{
+        const alertContainer = document.createElement("div");
+        alertContainer.className =
+          "alert alert-success alert-dismissible fade show fixed-top w-100";
+        alertContainer.innerHTML = `
+             <strong>Success!</strong> Your Data Has Been Updated Successfully
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+
+        document.body.insertBefore(alertContainer, document.body.firstChild);
+
+        setTimeout( () => {
+          document.body.removeChild(alertContainer);
+        }, 2000);
+      }
+      const showUsers = ()=> {
+    let usersData = JSON.parse(localStorage.getItem("users")) || [];
+    // console.log(usersData);
+    let userSelect = document.getElementById("userSelect");
+    userSelect.innerHTML = "";
+    let selectUserOption = document.createElement("option");
+    selectUserOption.value = "";
+    selectUserOption.text = "Select User";
+    userSelect.appendChild(selectUserOption);
+
+    for (let i of usersData) {
+        let userId = i.id;
+        // console.log(userId);
+        let userFirstName = i.first_name;
+        let option = document.createElement("option");
+        option.value = userId;
+        option.text = userFirstName;
+        console.log("User ID:",userId);
+        
+        // if (userId === selectedUserId) {
+        //     option.selected = true;
+        // }
+        userSelect.appendChild(option);
+    }
+}
+
+
+
+    </script>
+    <noscript>Please enable JavaScript to view the page content.</noscript>
+  </body>
+</html>
